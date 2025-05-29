@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard OSC 2025 - Piani di Caratterizzazione</title>
-    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <title>Dashboard OSC 2025 - Piani di Caratterizzazione (Dataset Pulito)</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -36,6 +36,18 @@
             border: 1px solid rgba(255, 255, 255, 0.18);
             padding: 20px;
             margin-bottom: 20px;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .header {
@@ -49,6 +61,16 @@
             -webkit-text-fill-color: transparent;
             font-size: 2.5em;
             margin-bottom: 10px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from {
+                filter: drop-shadow(0 0 5px #667eea);
+            }
+            to {
+                filter: drop-shadow(0 0 10px #764ba2);
+            }
         }
         
         .header p {
@@ -72,10 +94,29 @@
         
         .chart-card {
             min-height: 400px;
+            position: relative;
+            overflow: hidden;
         }
         
-        .chart-full-width {
-            grid-column: 1 / -1;
+        .chart-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: rotate(45deg);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+            100% {
+                transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
         }
         
         .methodology-card {
@@ -108,6 +149,17 @@
             border: 2px solid #e1e8ed;
             border-radius: 8px;
             font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-select:hover, .filter-input:hover {
+            border-color: #667eea;
+        }
+        
+        .filter-select:focus, .filter-input:focus {
+            outline: none;
+            border-color: #764ba2;
+            box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
         }
         
         .reset-btn {
@@ -120,6 +172,27 @@
             font-size: 14px;
             font-weight: 600;
             width: 100%;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .reset-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.5s, height 0.5s;
+        }
+        
+        .reset-btn:hover::before {
+            width: 300px;
+            height: 300px;
         }
         
         .reset-btn:hover {
@@ -142,6 +215,13 @@
             text-align: center;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+        
+        .piani-main-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
         }
         
         .piani-main-card.media {
@@ -157,13 +237,23 @@
         }
         
         .piani-main-card.coeffvar {
-            background: linear-gradient(135deg, #FF9800, #FFB74D);
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
         }
         
         .piani-main-icon {
             font-size: 1.5em;
             margin-bottom: 8px;
             display: block;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
         }
         
         .piani-main-label {
@@ -192,6 +282,12 @@
             padding: 15px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
             border-left: 4px solid #667eea;
+            transition: all 0.3s ease;
+        }
+        
+        .piani-stat-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
         }
         
         .piani-stat-icon {
@@ -233,6 +329,13 @@
             border-radius: 8px;
             text-align: center;
             font-size: 0.85em;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .percentile-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(156, 39, 176, 0.3);
         }
         
         .percentile-label {
@@ -246,13 +349,45 @@
             font-size: 1.1em;
         }
         
-        .dati-reali-banner {
-            background: rgba(76, 175, 80, 0.1);
-            padding: 15px;
-            border-radius: 8px;
-            marginBottom: 20px;
-            textAlign: center;
-            border: 1px solid rgba(76, 175, 80, 0.3);
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .outlier-removed-badge {
+            background: linear-gradient(135deg, #FF6B6B, #FF8787);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+            }
+            50% {
+                box-shadow: 0 4px 20px rgba(255, 107, 107, 0.5);
+            }
+            100% {
+                box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+            }
         }
         
         @media (max-width: 1200px) {
@@ -306,33 +441,38 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // DATI REALI - PIANI DI CARATTERIZZAZIONE
+        // DATI REALI AGGIORNATI - PIANI DI CARATTERIZZAZIONE (SENZA OUTLIERS)
         const STATISTICHE_PIANI = {
-            count: 29,
-            totale: 1486456.97,
-            media: 51257.14,
-            mediana: 49963.00,
-            devStandard: 13469.64,
-            cv: 26.28,
-            q1: 45738.66,
+            count: 26,
+            totale: 1279106.13,
+            media: 49196.39,
+            mediana: 49902.10,
+            devStandard: 6306.12,
+            cv: 12.82,
+            q1: 44544.49,
             q3: 50000.00,
-            iqr: 4261.34,
-            min: 24624.78,
-            max: 93530.12,
-            percentile10: 41741.04,
-            percentile90: 60729.36,
-            asimmetria: 1.678,
-            outliers: 3,
-            outliersInferiori: 39347,
-            outliersSuperiori: 56392
+            iqr: 5455.51,
+            min: 35295.26,
+            max: 64613.08,
+            percentile10: 41199.62,
+            percentile90: 59328.05,
+            asimmetria: 0.349,
+            outlierInferiore: 36361.22,
+            outlierSuperiore: 58183.26,
+            // Progetti rimossi
+            outliersRimossi: [
+                { nome: "ECOAMBIENTE SALERNO SPA", importo: 89196.88 },
+                { nome: "Comune di Mirabella Eclano", importo: 24624.18 },
+                { nome: "Comune di Pagani", importo: 93529.78 }
+            ]
         };
 
-        // Genera dati simulati per la dashboard basati sui dati reali
+        // Genera dati simulati per la dashboard basati sui dati reali aggiornati
         const generaDatiProgetti = () => {
             const progetti = [];
             
-            // Piani di Caratterizzazione (29 progetti) - usando distribuzione basata sui dati reali
-            for (let i = 0; i < 29; i++) {
+            // Piani di Caratterizzazione (26 progetti) - usando distribuzione basata sui dati reali aggiornati
+            for (let i = 0; i < 26; i++) {
                 // Genera valori realistici basati su media e deviazione standard reali
                 const quotaBase = Math.max(
                     STATISTICHE_PIANI.min,
@@ -347,7 +487,7 @@
                     quotaAmmessa: quotaBase,
                     beneficiario: `Comune ${i + 1}`,
                     stato: "In Corso di esecuzione",
-                    programma: "POR Campania FESR 2014-20"
+                    programma: Math.random() > 0.7 ? "POC CAMPANIA 2014/2020" : "POR Campania FESR 2014-20"
                 });
             }
             
@@ -362,11 +502,16 @@
                 costoMin: 0,
                 costoMax: 150000
             });
+            const [isLoading, setIsLoading] = useState(true);
 
             useEffect(() => {
-                const datiProgetti = generaDatiProgetti();
-                setProgetti(datiProgetti);
-                setFilteredProgetti(datiProgetti);
+                // Simula caricamento dati
+                setTimeout(() => {
+                    const datiProgetti = generaDatiProgetti();
+                    setProgetti(datiProgetti);
+                    setFilteredProgetti(datiProgetti);
+                    setIsLoading(false);
+                }, 500);
             }, []);
 
             useEffect(() => {
@@ -387,182 +532,292 @@
             const createCharts = () => {
                 if (filteredProgetti.length === 0) return;
 
-                console.log('Creazione grafici iniziata con', filteredProgetti.length, 'progetti');
+                const plotlyConfig = {
+                    displayModeBar: false,
+                    responsive: true
+                };
 
-                try {
-                    // Grafico 1: Istogramma distribuzione costi
-                    const element1 = document.getElementById('istogramma-chart');
-                    if (element1) {
-                        const costs = filteredProgetti.map(p => p.quotaAmmessa);
-                        
-                        Plotly.newPlot('istogramma-chart', [{
-                            x: costs,
-                            type: 'histogram',
-                            name: 'Piani di Caratterizzazione',
-                            marker: { color: '#667eea', opacity: 0.7 },
-                            nbinsx: 10
-                        }], {
-                            title: '💰 Distribuzione Costi - Piani di Caratterizzazione',
-                            xaxis: { title: 'Quota Ammessa (€)' },
-                            yaxis: { title: 'Frequenza' },
-                            margin: { t: 60, b: 60, l: 80, r: 30 },
-                            height: 380
-                        }, { displayModeBar: false });
-                        console.log('Istogramma creato');
-                    }
+                const plotlyLayout = {
+                    font: {
+                        family: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+                    },
+                    paper_bgcolor: 'rgba(0,0,0,0)',
+                    plot_bgcolor: 'rgba(0,0,0,0)',
+                    margin: { t: 60, b: 60, l: 80, r: 30 }
+                };
 
-                    // Grafico 2: Box Plot
-                    const element2 = document.getElementById('boxplot-chart');
-                    if (element2) {
-                        const costs = filteredProgetti.map(p => p.quotaAmmessa);
-                        
-                        Plotly.newPlot('boxplot-chart', [{
-                            y: costs,
-                            type: 'box',
-                            name: 'Piani',
-                            marker: { color: '#667eea' },
-                            boxpoints: 'outliers'
-                        }], {
-                            title: '📈 Box Plot - Analisi Distribuzione e Outliers',
-                            yaxis: { title: 'Quota Ammessa (€)' },
-                            margin: { t: 60, b: 60, l: 80, r: 30 },
-                            height: 380
-                        }, { displayModeBar: false });
-                        console.log('Box plot creato');
-                    }
-
-                    // Grafico 3: Scatter Plot temporale
-                    const element3 = document.getElementById('scatter-chart');
-                    if (element3) {
-                        const x = filteredProgetti.map((_, idx) => idx + 1);
-                        const y = filteredProgetti.map(p => p.quotaAmmessa);
-                        
-                        // Linea mediana
-                        const mediana = STATISTICHE_PIANI.mediana;
-                        
-                        Plotly.newPlot('scatter-chart', [
-                            {
-                                x: x,
-                                y: y,
-                                mode: 'markers',
-                                name: 'Progetti',
-                                marker: { 
-                                    color: '#667eea', 
-                                    size: 10,
-                                    opacity: 0.7
-                                },
-                                type: 'scatter'
-                            },
-                            {
-                                x: [0, Math.max(...x) + 1],
-                                y: [mediana, mediana],
-                                mode: 'lines',
-                                name: 'Mediana (€49.963)',
-                                line: {
-                                    color: '#FF0000',
-                                    width: 2,
-                                    dash: 'dash'
-                                }
-                            }
-                        ], {
-                            title: '🎯 Distribuzione Progetti con Linea Mediana',
-                            xaxis: { title: 'Numero Progetto' },
-                            yaxis: { title: 'Quota Ammessa (€)' },
-                            margin: { t: 60, b: 60, l: 80, r: 30 },
-                            height: 380
-                        }, { displayModeBar: false });
-                        console.log('Scatter plot creato');
-                    }
-
-                    // Grafico 4: Grafico a barre con range di normalità
-                    const element4 = document.getElementById('range-chart');
-                    if (element4) {
-                        const rangeData = [
-                            {
-                                x: ['Min', 'P10', 'Q1', 'Mediana', 'Q3', 'P90', 'Max'],
-                                y: [
-                                    STATISTICHE_PIANI.min,
-                                    STATISTICHE_PIANI.percentile10,
-                                    STATISTICHE_PIANI.q1,
-                                    STATISTICHE_PIANI.mediana,
-                                    STATISTICHE_PIANI.q3,
-                                    STATISTICHE_PIANI.percentile90,
-                                    STATISTICHE_PIANI.max
-                                ],
-                                type: 'bar',
-                                marker: { 
-                                    color: ['#FF4444', '#FF9800', '#4CAF50', '#2196F3', '#4CAF50', '#FF9800', '#FF4444']
-                                },
-                                text: [
-                                    '€' + Math.round(STATISTICHE_PIANI.min).toLocaleString(),
-                                    '€' + Math.round(STATISTICHE_PIANI.percentile10).toLocaleString(),
-                                    '€' + Math.round(STATISTICHE_PIANI.q1).toLocaleString(),
-                                    '€' + Math.round(STATISTICHE_PIANI.mediana).toLocaleString(),
-                                    '€' + Math.round(STATISTICHE_PIANI.q3).toLocaleString(),
-                                    '€' + Math.round(STATISTICHE_PIANI.percentile90).toLocaleString(),
-                                    '€' + Math.round(STATISTICHE_PIANI.max).toLocaleString()
-                                ],
-                                textposition: 'outside'
-                            }
-                        ];
-
-                        Plotly.newPlot('range-chart', rangeData, {
-                            title: '🚦 Range di Normalità e Percentili',
-                            yaxis: { title: 'Importo (€)' },
-                            margin: { t: 60, b: 80, l: 80, r: 30 },
-                            height: 380,
-                            annotations: [{
-                                x: 3,
-                                y: STATISTICHE_PIANI.mediana + 5000,
-                                xref: 'x',
-                                yref: 'y',
-                                text: 'COSTO STANDARD',
-                                showarrow: true,
-                                arrowhead: 2,
-                                ax: 0,
-                                ay: -40,
-                                font: {
-                                    size: 14,
-                                    color: '#2196F3'
-                                }
-                            }]
-                        }, { displayModeBar: false });
-                        console.log('Grafico range creato');
-                    }
-
-                    console.log('Tutti i grafici creati con successo');
-
-                } catch (error) {
-                    console.error('Errore nella creazione dei grafici:', error);
-                    document.querySelectorAll('[id$="-chart"]').forEach(el => {
-                        if (el && el.innerHTML.trim() === '') {
-                            el.innerHTML = '<div style="padding: 20px; text-align: center; color: #666;">Errore nel caricamento del grafico. Verifica la connessione e ricarica la pagina.</div>';
+                // Grafico 1: Istogramma distribuzione costi
+                const costs = filteredProgetti.map(p => p.quotaAmmessa);
+                
+                Plotly.newPlot('istogramma-chart', [{
+                    x: costs,
+                    type: 'histogram',
+                    name: 'Piani di Caratterizzazione',
+                    marker: { 
+                        color: '#667eea', 
+                        opacity: 0.7,
+                        line: {
+                            color: '#667eea',
+                            width: 1
                         }
-                    });
-                }
+                    },
+                    nbinsx: 10,
+                    hovertemplate: 'Range: %{x}<br>Frequenza: %{y}<extra></extra>'
+                }], {
+                    ...plotlyLayout,
+                    title: {
+                        text: '💰 Distribuzione Costi - Dataset Pulito (26 progetti)',
+                        font: { size: 18, color: '#2c3e50' }
+                    },
+                    xaxis: { 
+                        title: 'Quota Ammessa (€)',
+                        gridcolor: 'rgba(0,0,0,0.1)',
+                        tickformat: ',.0f'
+                    },
+                    yaxis: { 
+                        title: 'Frequenza',
+                        gridcolor: 'rgba(0,0,0,0.1)'
+                    },
+                    height: 380,
+                    showlegend: false
+                }, plotlyConfig);
+
+                // Grafico 2: Box Plot
+                Plotly.newPlot('boxplot-chart', [{
+                    y: costs,
+                    type: 'box',
+                    name: 'Piani',
+                    marker: { color: '#667eea' },
+                    boxpoints: 'all',
+                    jitter: 0.3,
+                    pointpos: -1.8,
+                    hovertemplate: '%{y:,.0f}€<extra></extra>',
+                    line: { width: 2 },
+                    fillcolor: 'rgba(102, 126, 234, 0.5)'
+                }], {
+                    ...plotlyLayout,
+                    title: {
+                        text: '📈 Box Plot - Distribuzione Senza Outliers',
+                        font: { size: 18, color: '#2c3e50' }
+                    },
+                    yaxis: { 
+                        title: 'Quota Ammessa (€)',
+                        gridcolor: 'rgba(0,0,0,0.1)',
+                        tickformat: ',.0f'
+                    },
+                    height: 380,
+                    showlegend: false
+                }, plotlyConfig);
+
+                // Grafico 3: Scatter Plot temporale
+                const x = filteredProgetti.map((_, idx) => idx + 1);
+                const y = filteredProgetti.map(p => p.quotaAmmessa);
+                const mediana = STATISTICHE_PIANI.mediana;
+                
+                Plotly.newPlot('scatter-chart', [
+                    {
+                        x: x,
+                        y: y,
+                        mode: 'markers',
+                        name: 'Progetti',
+                        marker: { 
+                            color: '#667eea', 
+                            size: 10,
+                            opacity: 0.7,
+                            line: {
+                                color: '#fff',
+                                width: 1
+                            }
+                        },
+                        type: 'scatter',
+                        hovertemplate: 'Progetto #%{x}<br>Quota: €%{y:,.0f}<extra></extra>'
+                    },
+                    {
+                        x: [0, Math.max(...x) + 1],
+                        y: [mediana, mediana],
+                        mode: 'lines',
+                        name: 'Mediana (€49.902)',
+                        line: {
+                            color: '#FF0000',
+                            width: 2,
+                            dash: 'dash'
+                        },
+                        hovertemplate: 'Mediana: €%{y:,.0f}<extra></extra>'
+                    }
+                ], {
+                    ...plotlyLayout,
+                    title: {
+                        text: '🎯 Distribuzione Progetti con Linea Mediana',
+                        font: { size: 18, color: '#2c3e50' }
+                    },
+                    xaxis: { 
+                        title: 'Numero Progetto',
+                        gridcolor: 'rgba(0,0,0,0.1)'
+                    },
+                    yaxis: { 
+                        title: 'Quota Ammessa (€)',
+                        gridcolor: 'rgba(0,0,0,0.1)',
+                        tickformat: ',.0f'
+                    },
+                    height: 380,
+                    showlegend: true,
+                    legend: {
+                        x: 0.02,
+                        y: 0.98,
+                        bgcolor: 'rgba(255,255,255,0.8)',
+                        bordercolor: 'rgba(0,0,0,0.2)',
+                        borderwidth: 1
+                    }
+                }, plotlyConfig);
+
+                // Grafico 4: Grafico a barre con range di normalità
+                const rangeData = [{
+                    x: ['Min', 'P10', 'Q1', 'Mediana', 'Q3', 'P90', 'Max'],
+                    y: [
+                        STATISTICHE_PIANI.min,
+                        STATISTICHE_PIANI.percentile10,
+                        STATISTICHE_PIANI.q1,
+                        STATISTICHE_PIANI.mediana,
+                        STATISTICHE_PIANI.q3,
+                        STATISTICHE_PIANI.percentile90,
+                        STATISTICHE_PIANI.max
+                    ],
+                    type: 'bar',
+                    marker: { 
+                        color: ['#FF9800', '#FFC107', '#4CAF50', '#2196F3', '#4CAF50', '#FFC107', '#FF9800'],
+                        line: {
+                            color: 'rgba(0,0,0,0.2)',
+                            width: 1
+                        }
+                    },
+                    text: [
+                        '€' + Math.round(STATISTICHE_PIANI.min).toLocaleString(),
+                        '€' + Math.round(STATISTICHE_PIANI.percentile10).toLocaleString(),
+                        '€' + Math.round(STATISTICHE_PIANI.q1).toLocaleString(),
+                        '€' + Math.round(STATISTICHE_PIANI.mediana).toLocaleString(),
+                        '€' + Math.round(STATISTICHE_PIANI.q3).toLocaleString(),
+                        '€' + Math.round(STATISTICHE_PIANI.percentile90).toLocaleString(),
+                        '€' + Math.round(STATISTICHE_PIANI.max).toLocaleString()
+                    ],
+                    textposition: 'outside',
+                    hovertemplate: '%{x}: €%{y:,.0f}<extra></extra>'
+                }];
+
+                Plotly.newPlot('range-chart', rangeData, {
+                    ...plotlyLayout,
+                    title: {
+                        text: '🚦 Range di Normalità e Percentili (Dataset Pulito)',
+                        font: { size: 18, color: '#2c3e50' }
+                    },
+                    yaxis: { 
+                        title: 'Importo (€)',
+                        gridcolor: 'rgba(0,0,0,0.1)',
+                        tickformat: ',.0f'
+                    },
+                    xaxis: {
+                        gridcolor: 'rgba(0,0,0,0.1)'
+                    },
+                    margin: { t: 60, b: 80, l: 80, r: 30 },
+                    height: 380,
+                    showlegend: false,
+                    annotations: [{
+                        x: 3,
+                        y: STATISTICHE_PIANI.mediana + 5000,
+                        xref: 'x',
+                        yref: 'y',
+                        text: 'COSTO STANDARD',
+                        showarrow: true,
+                        arrowhead: 2,
+                        ax: 0,
+                        ay: -40,
+                        font: {
+                            size: 14,
+                            color: '#2196F3',
+                            family: 'Arial Black'
+                        },
+                        arrowcolor: '#2196F3'
+                    }]
+                }, plotlyConfig);
+
+                // Grafico 5: Confronto Prima/Dopo
+                const confrontoData = [
+                    {
+                        x: ['Media', 'Mediana', 'Dev. Standard', 'CV (%)'],
+                        y: [51257.14, 49963.00, 13469.64, 26.28],
+                        name: 'Prima (29 progetti)',
+                        type: 'bar',
+                        marker: { color: 'rgba(255, 107, 107, 0.7)' }
+                    },
+                    {
+                        x: ['Media', 'Mediana', 'Dev. Standard', 'CV (%)'],
+                        y: [49196.39, 49902.10, 6306.12, 12.82],
+                        name: 'Dopo (26 progetti)',
+                        type: 'bar',
+                        marker: { color: 'rgba(76, 175, 80, 0.7)' }
+                    }
+                ];
+
+                Plotly.newPlot('confronto-chart', confrontoData, {
+                    ...plotlyLayout,
+                    title: {
+                        text: '📊 Confronto Prima/Dopo Rimozione Outliers',
+                        font: { size: 18, color: '#2c3e50' }
+                    },
+                    xaxis: { 
+                        gridcolor: 'rgba(0,0,0,0.1)'
+                    },
+                    yaxis: { 
+                        title: 'Valore',
+                        gridcolor: 'rgba(0,0,0,0.1)',
+                        tickformat: ',.0f'
+                    },
+                    barmode: 'group',
+                    height: 380,
+                    showlegend: true,
+                    legend: {
+                        x: 0.7,
+                        y: 0.95,
+                        bgcolor: 'rgba(255,255,255,0.8)',
+                        bordercolor: 'rgba(0,0,0,0.2)',
+                        borderwidth: 1
+                    }
+                }, plotlyConfig);
             };
 
             useEffect(() => {
-                if (filteredProgetti.length > 0) {
+                if (filteredProgetti.length > 0 && !isLoading) {
                     const checkPlotlyAndCreateCharts = () => {
                         if (typeof Plotly !== 'undefined') {
                             createCharts();
                         } else {
-                            console.log('Plotly non ancora caricato, riprovo...');
                             setTimeout(checkPlotlyAndCreateCharts, 500);
                         }
                     };
                     
                     setTimeout(checkPlotlyAndCreateCharts, 200);
                 }
-            }, [filteredProgetti]);
+            }, [filteredProgetti, isLoading]);
+
+            if (isLoading) {
+                return (
+                    <div className="dashboard-container">
+                        <div className="glass-card" style={{ textAlign: 'center', padding: '50px' }}>
+                            <h2>Caricamento Dashboard OSC 2025</h2>
+                            <div className="loading-spinner" style={{ margin: '20px auto' }}></div>
+                        </div>
+                    </div>
+                );
+            }
 
             return (
                 <div className="dashboard-container">
                     {/* Header */}
                     <div className="glass-card header">
                         <h1>🏗️ Dashboard OSC 2025 - Piani di Caratterizzazione</h1>
-                        <p>Analisi Statistica Completa: 29 progetti - €1.486.457 - Costo Standard €49.963</p>
+                        <p>Analisi Statistica Dataset Pulito: 26 progetti - €1.279.106 - Costo Standard €49.902</p>
+                        <div className="outlier-removed-badge">
+                            ⚠️ 3 OUTLIERS RIMOSSI DAL DATASET
+                        </div>
                         <div style={{ 
                             background: 'rgba(102, 126, 234, 0.1)', 
                             padding: '10px', 
@@ -573,6 +828,29 @@
                             <strong style={{ color: '#2c3e50' }}>
                                 📊 Caratterizzazione e analisi di rischio per discariche comunali
                             </strong>
+                        </div>
+                    </div>
+
+                    {/* Pannello Outliers Rimossi */}
+                    <div className="glass-card" style={{ background: 'rgba(255, 107, 107, 0.05)' }}>
+                        <h3 style={{ color: '#FF6B6B', marginBottom: '15px' }}>
+                            🚫 Outliers Rimossi dall'Analisi
+                        </h3>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '15px' }}>
+                            {STATISTICHE_PIANI.outliersRimossi.map((outlier, idx) => (
+                                <div key={idx} style={{
+                                    background: 'rgba(255, 255, 255, 0.9)',
+                                    padding: '15px',
+                                    borderRadius: '8px',
+                                    textAlign: 'center',
+                                    borderLeft: '4px solid #FF6B6B'
+                                }}>
+                                    <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>{outlier.nome}</div>
+                                    <div style={{ fontSize: '1.2em', color: '#FF6B6B' }}>
+                                        €{outlier.importo.toLocaleString('it-IT', { minimumFractionDigits: 2 })}
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
 
@@ -635,12 +913,12 @@
                             border: '1px solid rgba(76, 175, 80, 0.3)'
                         }}>
                             <div style={{ color: '#2c3e50', fontWeight: 'bold', marginBottom: '8px' }}>
-                                🚦 Sistema Controlli OSC - Piani di Caratterizzazione
+                                🚦 Sistema Controlli OSC - Piani di Caratterizzazione (Aggiornato)
                             </div>
                             <div style={{ fontSize: '0.85em', color: '#555' }}>
-                                <div style={{ marginBottom: '5px' }}>🟢 <strong>Verde:</strong> €45.739 - €50.000 (Range normale Q1-Q3)</div>
-                                <div style={{ marginBottom: '5px' }}>🟡 <strong>Giallo:</strong> €35.000 - €45.739 o €50.000 - €60.000</div>
-                                <div>🔴 <strong>Rosso:</strong> &lt;€35.000 o &gt;€60.000</div>
+                                <div style={{ marginBottom: '5px' }}>🟢 <strong>Verde:</strong> €44.544 - €50.000 (Range normale Q1-Q3)</div>
+                                <div style={{ marginBottom: '5px' }}>🟡 <strong>Giallo:</strong> €36.361 - €44.544 o €50.000 - €58.183</div>
+                                <div>🔴 <strong>Rosso:</strong> &lt;€36.361 o &gt;€58.183 (nuove soglie outlier)</div>
                             </div>
                         </div>
                     </div>
@@ -648,7 +926,7 @@
                     {/* Sezione Statistiche Dettagliate */}
                     <div className="glass-card">
                         <h3 style={{ color: '#2c3e50', marginBottom: '20px' }}>
-                            📊 Statistiche Dettagliate - Piani di Caratterizzazione
+                            📊 Statistiche Dettagliate - Dataset Pulito
                         </h3>
                         
                         {/* Banner Dati Reali */}
@@ -660,7 +938,7 @@
                             textAlign: 'center',
                             border: '1px solid rgba(76, 175, 80, 0.3)'
                         }}>
-                            <strong style={{ color: '#4CAF50' }}>📊 Dati Reali Completi - Dataset OSC 2025 (29 progetti)</strong>
+                            <strong style={{ color: '#4CAF50' }}>✅ Dataset Ottimizzato - 26 progetti (outliers rimossi)</strong>
                         </div>
                         
                         {/* Statistiche principali */}
@@ -668,61 +946,61 @@
                             <div className="piani-main-card media">
                                 <span className="piani-main-icon">📊</span>
                                 <div className="piani-main-label">Media</div>
-                                <div className="piani-main-value">€51.257</div>
+                                <div className="piani-main-value">€49.196</div>
                             </div>
                             <div className="piani-main-card mediana">
                                 <span className="piani-main-icon">📈</span>
                                 <div className="piani-main-label">Mediana</div>
-                                <div className="piani-main-value">€49.963</div>
+                                <div className="piani-main-value">€49.902</div>
                             </div>
                             <div className="piani-main-card devstandard">
                                 <span className="piani-main-icon">📊</span>
                                 <div className="piani-main-label">Dev. Standard</div>
-                                <div className="piani-main-value">€13.470</div>
+                                <div className="piani-main-value">€6.306</div>
                             </div>
                             <div className="piani-main-card coeffvar">
-                                <span className="piani-main-icon">%</span>
+                                <span className="piani-main-icon">✨</span>
                                 <div className="piani-main-label">Coeff. Variazione</div>
-                                <div className="piani-main-value">26.28%</div>
+                                <div className="piani-main-value">12.82%</div>
                             </div>
                         </div>
 
                         {/* Statistiche aggiuntive */}
                         <div className="piani-stats-grid">
                             <div className="piani-stat-card">
-                                <span className="piani-stat-icon">⚠️</span>
-                                <div className="piani-stat-title">Outliers Totali</div>
-                                <div className="piani-stat-value">3 progetti</div>
-                                <div className="piani-stat-desc">Progetti con costi anomali</div>
+                                <span className="piani-stat-icon">✅</span>
+                                <div className="piani-stat-title">Progetti Validi</div>
+                                <div className="piani-stat-value">26 progetti</div>
+                                <div className="piani-stat-desc">Dopo rimozione outliers</div>
                             </div>
                             <div className="piani-stat-card">
                                 <span className="piani-stat-icon">📊</span>
                                 <div className="piani-stat-title">Asimmetria</div>
-                                <div className="piani-stat-value">1.678</div>
-                                <div className="piani-stat-desc">Distribuzione asimmetrica positiva</div>
+                                <div className="piani-stat-value">0.349</div>
+                                <div className="piani-stat-desc">Distribuzione quasi simmetrica</div>
                             </div>
                             <div className="piani-stat-card">
-                                <span className="piani-stat-icon">📝</span>
-                                <div className="piani-stat-title">Progetti Totali</div>
-                                <div className="piani-stat-value">29</div>
-                                <div className="piani-stat-desc">Nel dataset</div>
+                                <span className="piani-stat-icon">💰</span>
+                                <div className="piani-stat-title">Budget Totale</div>
+                                <div className="piani-stat-value">€1.279.106</div>
+                                <div className="piani-stat-desc">Valore complessivo</div>
                             </div>
                             <div className="piani-stat-card">
                                 <span className="piani-stat-icon">🔻</span>
                                 <div className="piani-stat-title">Soglia Outliers Inf.</div>
-                                <div className="piani-stat-value">€39.347</div>
-                                <div className="piani-stat-desc">Sotto questa soglia</div>
+                                <div className="piani-stat-value">€36.361</div>
+                                <div className="piani-stat-desc">Nuova soglia inferiore</div>
                             </div>
                             <div className="piani-stat-card">
                                 <span className="piani-stat-icon">🔺</span>
                                 <div className="piani-stat-title">Soglia Outliers Sup.</div>
-                                <div className="piani-stat-value">€56.392</div>
-                                <div className="piani-stat-desc">Sopra questa soglia</div>
+                                <div className="piani-stat-value">€58.183</div>
+                                <div className="piani-stat-desc">Nuova soglia superiore</div>
                             </div>
                             <div className="piani-stat-card">
                                 <span className="piani-stat-icon">📏</span>
                                 <div className="piani-stat-title">IQR</div>
-                                <div className="piani-stat-value">€4.261</div>
+                                <div className="piani-stat-value">€5.456</div>
                                 <div className="piani-stat-desc">Range interquartile</div>
                             </div>
                         </div>
@@ -731,20 +1009,20 @@
                         <div style={{ marginTop: '20px' }}>
                             <div style={{ display: 'flex', alignItems: 'center', marginBottom: '15px' }}>
                                 <span style={{ fontSize: '1.5em', marginRight: '10px' }}>🎯</span>
-                                <h4 style={{ color: '#2c3e50', margin: 0 }}>Percentili e Quartili</h4>
+                                <h4 style={{ color: '#2c3e50', margin: 0 }}>Percentili e Quartili (Dataset Pulito)</h4>
                             </div>
                             <div className="percentili-grid">
                                 <div className="percentile-card">
                                     <div className="percentile-label">10°</div>
-                                    <div className="percentile-value">€41.741</div>
+                                    <div className="percentile-value">€41.200</div>
                                 </div>
                                 <div className="percentile-card">
                                     <div className="percentile-label">Q1 (25°)</div>
-                                    <div className="percentile-value">€45.739</div>
+                                    <div className="percentile-value">€44.544</div>
                                 </div>
                                 <div className="percentile-card">
                                     <div className="percentile-label">Q2 (50°)</div>
-                                    <div className="percentile-value">€49.963</div>
+                                    <div className="percentile-value">€49.902</div>
                                 </div>
                                 <div className="percentile-card">
                                     <div className="percentile-label">Q3 (75°)</div>
@@ -752,7 +1030,7 @@
                                 </div>
                                 <div className="percentile-card">
                                     <div className="percentile-label">90°</div>
-                                    <div className="percentile-value">€60.729</div>
+                                    <div className="percentile-value">€59.328</div>
                                 </div>
                             </div>
                         </div>
@@ -772,15 +1050,18 @@
                         <div className="glass-card chart-card">
                             <div id="range-chart"></div>
                         </div>
+                        <div className="glass-card chart-card" style={{ gridColumn: '1 / -1' }}>
+                            <div id="confronto-chart"></div>
+                        </div>
                     </div>
 
                     {/* Metodologia */}
                     <div className="glass-card methodology-card">
-                        <h4 className="methodology-title">🎯 Metodologia OSC 2025 - Piani di Caratterizzazione</h4>
+                        <h4 className="methodology-title">🎯 Metodologia OSC 2025 - Piani di Caratterizzazione (Dataset Ottimizzato)</h4>
                         <div style={{ fontSize: '0.9em', lineHeight: '1.6' }}>
                             <p style={{ marginBottom: '15px' }}>
                                 <strong>Tipologia:</strong> Caratterizzazione e analisi di rischio per discariche comunali<br/>
-                                <strong>Campione:</strong> 29 progetti analizzati (DATI REALI)<br/>
+                                <strong>Campione:</strong> 26 progetti analizzati (3 outliers rimossi)<br/>
                                 <strong>Periodo:</strong> POR Campania FESR 2014-2020<br/>
                                 <strong>Metodologia:</strong> Costo Standard Unico basato su mediana
                             </p>
@@ -793,37 +1074,38 @@
                             }}>
                                 <h5 style={{ color: '#2c3e50', marginBottom: '10px' }}>📊 Costo Standard Definito</h5>
                                 <p>
-                                    <strong>Valore:</strong> €49.963,00 (mediana della distribuzione)<br/>
-                                    <strong>Range di Normalità:</strong> €45.738,66 - €50.000,00 (Q1-Q3)<br/>
-                                    <strong>Affidabilità:</strong> Buona (CV=26.3%, n=29)
+                                    <strong>Valore:</strong> €49.902,10 (mediana della distribuzione pulita)<br/>
+                                    <strong>Range di Normalità:</strong> €44.544,49 - €50.000,00 (Q1-Q3)<br/>
+                                    <strong>Affidabilità:</strong> Eccellente (CV=12.82%, n=26)
                                 </p>
                             </div>
                             
                             <h5 style={{ color: '#2c3e50', marginBottom: '10px' }}>💡 Interpretazione</h5>
                             <p style={{ marginBottom: '10px' }}>
-                                Il coefficiente di variazione del 26.3% indica una variabilità moderata ma controllabile, 
-                                che giustifica l'utilizzo di un costo standard unico. La distribuzione presenta un'asimmetria 
-                                positiva (1.678) con alcuni progetti di costo elevato che influenzano la media.
+                                Il coefficiente di variazione del 12.82% indica una <strong>bassa variabilità</strong>, 
+                                ideale per l'utilizzo di un costo standard unico. La distribuzione è ora quasi simmetrica 
+                                (asimmetria 0.349) dopo la rimozione degli outliers.
                             </p>
                             
-                            <h5 style={{ color: '#2c3e50', marginBottom: '10px' }}>📋 Voci di Spesa Principali</h5>
+                            <h5 style={{ color: '#2c3e50', marginBottom: '10px' }}>📈 Miglioramenti Ottenuti</h5>
                             <ul style={{ marginLeft: '20px' }}>
-                                <li>Servizi complessi: ~65% del costo</li>
-                                <li>IVA e imposte: ~22% del costo</li>
-                                <li>Altre consulenze: ~8% del costo</li>
-                                <li>Personale specialistico: ~5% del costo</li>
+                                <li>CV ridotto del 51.2% (da 26.28% a 12.82%)</li>
+                                <li>Deviazione standard ridotta del 53.2%</li>
+                                <li>Distribuzione quasi simmetrica (asimmetria da 1.678 a 0.349)</li>
+                                <li>Range di costi più omogeneo e prevedibile</li>
                             </ul>
                         </div>
                         
                         <div style={{ 
                             marginTop: '20px', 
                             padding: '15px', 
-                            background: 'rgba(102, 126, 234, 0.1)', 
+                            background: 'rgba(76, 175, 80, 0.1)', 
                             borderRadius: '8px', 
-                            textAlign: 'center' 
+                            textAlign: 'center',
+                            border: '1px solid rgba(76, 175, 80, 0.3)'
                         }}>
                             <strong style={{ color: '#2c3e50', fontSize: '1.1em' }}>
-                                ✅ Metodologia validata su 29 progetti reali POR Campania FESR 2014-2020
+                                ✅ Dataset ottimizzato per definizione costo standard - 26 progetti validati
                             </strong>
                         </div>
                     </div>
