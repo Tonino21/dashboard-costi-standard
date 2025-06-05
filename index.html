@@ -504,37 +504,92 @@
 
                 // Grafico 5: Confronto Prima/Dopo
                 if (confrontoEl) {
+                    // Dati per i primi 3 parametri (asse sinistro)
                     const confrontoData = [
                         {
-                            x: ['Media', 'Mediana', 'Dev. Standard', 'CV (%)'],
-                            y: [51257.14, 49963.00, 13469.64, 26.28],
+                            x: ['Media', 'Mediana', 'Dev. Standard'],
+                            y: [51257.14, 49963.00, 13469.64],
                             name: 'Prima (29 progetti)',
                             type: 'bar',
-                            marker: { color: 'rgba(255, 107, 107, 0.7)' }
+                            marker: { color: 'rgba(255, 107, 107, 0.7)' },
+                            yaxis: 'y'
                         },
                         {
-                            x: ['Media', 'Mediana', 'Dev. Standard', 'CV (%)'],
-                            y: [49196.39, 49902.10, 6431.00, 13.07],
+                            x: ['Media', 'Mediana', 'Dev. Standard'],
+                            y: [49196.39, 49902.10, 6431.00],
                             name: 'Dopo (26 progetti)',
                             type: 'bar',
-                            marker: { color: 'rgba(76, 175, 80, 0.7)' }
+                            marker: { color: 'rgba(76, 175, 80, 0.7)' },
+                            yaxis: 'y'
+                        },
+                        // CV su asse secondario
+                        {
+                            x: ['CV (%)'],
+                            y: [26.28],
+                            name: 'Prima - CV%',
+                            type: 'bar',
+                            marker: { color: 'rgba(255, 107, 107, 0.7)' },
+                            yaxis: 'y2',
+                            showlegend: false
+                        },
+                        {
+                            x: ['CV (%)'],
+                            y: [13.07],
+                            name: 'Dopo - CV%',
+                            type: 'bar',
+                            marker: { color: 'rgba(76, 175, 80, 0.7)' },
+                            yaxis: 'y2',
+                            showlegend: false
                         }
                     ];
 
                     Plotly.newPlot('confronto-chart', confrontoData, {
                         title: '📊 Confronto Prima/Dopo Rimozione Outliers',
-                        xaxis: { gridcolor: 'rgba(0,0,0,0.1)' },
-                        yaxis: { title: 'Valore', tickformat: ',.0f' },
+                        xaxis: { 
+                            gridcolor: 'rgba(0,0,0,0.1)',
+                            domain: [0, 0.9]
+                        },
+                        yaxis: { 
+                            title: 'Valore (€)', 
+                            tickformat: ',.0f',
+                            side: 'left'
+                        },
+                        yaxis2: {
+                            title: 'CV (%)',
+                            overlaying: 'y',
+                            side: 'right',
+                            showgrid: false,
+                            range: [0, 30]
+                        },
                         barmode: 'group',
                         height: 380,
                         showlegend: true,
                         legend: {
-                            x: 0.7,
+                            x: 0.5,
                             y: 0.95,
+                            xanchor: 'center',
                             bgcolor: 'rgba(255,255,255,0.8)',
                             bordercolor: 'rgba(0,0,0,0.2)',
                             borderwidth: 1
-                        }
+                        },
+                        annotations: [
+                            {
+                                x: 'CV (%)',
+                                y: 26.28,
+                                yref: 'y2',
+                                text: '26.28%',
+                                showarrow: false,
+                                yanchor: 'bottom'
+                            },
+                            {
+                                x: 'CV (%)',
+                                y: 13.07,
+                                yref: 'y2',
+                                text: '13.07%',
+                                showarrow: false,
+                                yanchor: 'bottom'
+                            }
+                        ]
                     }, { displayModeBar: false });
                 }
                 
